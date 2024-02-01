@@ -5,19 +5,24 @@ pub struct NodeStmtPush{
     pub value: i32,
 }
 #[derive(Debug)]
-pub struct NodeStmtPrint{
-    
-}
+pub struct NodeStmtPrint{}
 
 #[derive(Debug)]
-pub struct NodeStmtPlus{
-    
-}
+pub struct NodeStmtPlus{}
+
+#[derive(Debug)]
+pub struct NodeStmtDup{}
+
+#[derive(Debug)]
+pub struct NodeStmtMinus{}
+
 #[derive(Debug)]
 pub enum NodeStmt{
     Push(NodeStmtPush),
     Print(NodeStmtPrint),
     Plus(NodeStmtPlus),
+    Dup(NodeStmtDup),
+    Minus(NodeStmtMinus),
 }
 
 pub struct Node{
@@ -66,6 +71,16 @@ impl Parser {
         self.consume();
         Some(NodeStmt::Print(NodeStmtPrint{}))
     }
+
+    fn parse_dup(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        Some(NodeStmt::Dup(NodeStmtDup{}))
+    }
+
+    fn parse_minus(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        Some(NodeStmt::Minus(NodeStmtMinus{}))
+    }
     
     pub fn parse(&mut self) -> Option<NodeStmt> {
         while let Some(token) = self.peek(0) {
@@ -79,12 +94,18 @@ impl Parser {
                 tokenizer::TokenType::Dot => {
                     return self.parse_print();
                 },
+                tokenizer::TokenType::Dup => {
+                    return self.parse_dup();
+                },
+                tokenizer::TokenType::Minus => {
+                    return self.parse_minus();
+                },
                 _ => {
                     panic!("Unexpected token {:?}", token);
                 }
             }
         }
-        
+
         None
     }
 

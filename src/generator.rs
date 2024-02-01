@@ -85,6 +85,19 @@ impl Generator {
                     write!(stream, "    add rax, rbx\n").expect("Error writing add to stream");
                     write!(stream, "    push rax\n").expect("Error writing push to stream");
                 },
+                NodeStmt::Dup(_node) => {
+                    write!(stream, "    ;; -- dup --\n").expect("Error");
+                    write!(stream, "    pop rax\n").expect("Error writing pop to stream");
+                    write!(stream, "    push rax\n").expect("Error writing push to stream");
+                    write!(stream, "    push rax\n").expect("Error writing push to stream");
+                },
+                NodeStmt::Minus(_node) => {
+                    write!(stream, "    ;; -- minus --\n").expect("Error");
+                    write!(stream, "    pop rax\n").expect("Error writing pop to stream");
+                    write!(stream, "    pop rbx\n").expect("Error writing pop to stream");
+                    write!(stream, "    sub rbx, rax\n").expect("Error writing sub to stream");
+                    write!(stream, "    push rbx\n").expect("Error writing push to stream");
+                },
             }
         }
         write!(stream, "    ;; -- exit --\n").expect("Error");

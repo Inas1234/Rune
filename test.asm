@@ -50,9 +50,16 @@ segment .text
 global _start
 _start:
     ;; -- push --
-    push 5
+    push 10
     ;; -- push --
-    push 11
+    push 6
+    ;; -- minus --
+    pop rax
+    pop rbx
+    sub rbx, rax
+    push rbx
+    ;; -- push --
+    push 5
     ;; -- plus --
     pop rax
     pop rbx

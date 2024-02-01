@@ -4,6 +4,8 @@ pub enum TokenType{
     Number,
     Plus,
     Dot,
+    Dup,
+    Minus
 }
 
 #[derive(Debug, Clone)]
@@ -46,10 +48,35 @@ impl Tokenizer {
                 buffer.clear();
 
             }
+            else if c.is_alphabetic() {
+                buffer.push(self.consume());
+                while let Some(c) = self.peek(0) {
+                    if c.is_alphabetic(){
+                        buffer.push(self.consume());
+                    } else {
+                        break;
+                    }
+                    
+                }
+                if buffer == "dup" {
+                    tokens.push(Token{
+                        token_type: TokenType::Dup,
+                        value: None,
+                    });
+                }
+                buffer.clear();
+            }
             else if c == '+' {
                 self.consume();
                 tokens.push(Token{
                     token_type: TokenType::Plus,
+                    value: None,
+                });
+            }
+            else if c == '-' {
+                self.consume();
+                tokens.push(Token{
+                    token_type: TokenType::Minus,
                     value: None,
                 });
             }

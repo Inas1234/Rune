@@ -74,38 +74,38 @@ _start:
     ;; -- if --
     pop rax
     test rax, rax
-    je .Lelse_0
+    je .address_num_0
     ;; -- push --
     mov rax, 0
     push rax
     ;; -- if --
     pop rax
     test rax, rax
-    je .Lelse_1
+    je .address_num_1
     ;; -- push --
     mov rax, 44
     push rax
     ;; -- print --
     pop rdi
     call dump
-    jmp .Lend_if_1
-.Lelse_1:
+    jmp .address_num_2
+.address_num_1:
     ;; -- push --
     mov rax, 55
     push rax
     ;; -- print --
     pop rdi
     call dump
-.Lend_if_1:
-    jmp .Lend_if_0
-.Lelse_0:
+.address_num_2:
+    jmp .address_num_3
+.address_num_0:
     ;; -- push --
-    mov rax, 34
+    mov rax, 66
     push rax
     ;; -- print --
     pop rdi
     call dump
-.Lend_if_0:
+.address_num_3:
     ;; -- exit --
     mov rax, 60
     mov rdi, 0

@@ -161,26 +161,28 @@ impl Generator {
                 },
                 NodeStmt::If(_node) => {
                     let label = self.if_count;
-                    self.if_stack.push_back(label);
-                    self.if_count += 1;
-                    write!(stream, "    ;; -- if --\n").unwrap();
-                    write!(stream, "    pop rax\n").unwrap();
-                    write!(stream, "    test rax, rax\n").unwrap();
-                    write!(stream, "    je .Lelse_{}\n", label).unwrap(); // Jump to Else part if condition is false
+                    self.if_stack.push_back(label); // Remember this if for a potential else
+                    self.if_count += 1; // Prepare next label
+                    
+                    write!(stream, "    ;; -- if --\n").expect("Error");
+                    write!(stream, "    pop rax\n").expect("Error");
+                    write!(stream, "    test rax, rax\n").expect("Error");
+                    write!(stream, "    je .address_num_{}\n", label).expect("Error"); // Jump if false
                 },
                 NodeStmt::Else(_node) => {
-                    if let Some(label) = self.if_stack.back() {
-                        write!(stream, "    jmp .Lend_if_{}\n", label).unwrap(); // Jump to EndIf to skip Else part
-                        write!(stream, ".Lelse_{}:\n", label).unwrap(); // Label for Else part
-                    } else {
-                        panic!("No matching 'if' for 'else'");
-                    }
+                    let if_label = self.if_stack.pop_back().expect("No matching 'if' for 'else'");
+                    let else_label = self.if_count; // Use the next label for the jump over the else
+                    self.if_count += 1; // Increment for the next use
+                    
+                    write!(stream, "    jmp .address_num_{}\n", else_label).expect("Error"); // Jump over else
+                    write!(stream, ".address_num_{}:\n", if_label).expect("Error"); // Start else block
+                    self.if_stack.push_back(else_label); // Push else label for endif
                 },
                 NodeStmt::EndIf(_node) => {
                     if let Some(label) = self.if_stack.pop_back() {
-                        write!(stream, ".Lend_if_{}:\n", label).unwrap(); // Label for the end of the If/Else block
+                        write!(stream, ".address_num_{}:\n", label).expect("Error"); // Mark the end
                     } else {
-                        panic!("No matching 'if' for 'endif'");
+                        panic!("Syntax error: 'endif' without matching 'if' or 'else'");
                     }
                 },
             }

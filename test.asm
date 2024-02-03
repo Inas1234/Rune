@@ -74,49 +74,38 @@ _start:
     ;; -- if --
     pop rax
     test rax, rax
-    je .if_false_0
+    je .Lelse_0
     ;; -- push --
-    mov rax, 12
+    mov rax, 0
     push rax
-    ;; -- push --
-    mov rax, 13
-    push rax
-    ;; -- plus --
-    pop rax
-    pop rbx
-    add rax, rbx
-    push rax
-    ;; -- push --
-    mov rax, 25
-    push rax
-    ;; -- equal --
-    mov rcx, 0
-    mov rdx, 1
-    pop rax
-    pop rbx
-    cmp rax, rbx
-    cmove rcx, rdx
-    push rcx
     ;; -- if --
     pop rax
     test rax, rax
-    je .if_false_1
+    je .Lelse_1
     ;; -- push --
-    mov rax, 31
+    mov rax, 44
     push rax
     ;; -- print --
     pop rdi
     call dump
-    ;; -- endif --
-.if_false_1:
+    jmp .Lend_if_1
+.Lelse_1:
     ;; -- push --
-    mov rax, 31
+    mov rax, 55
     push rax
     ;; -- print --
     pop rdi
     call dump
-    ;; -- endif --
-.if_false_0:
+.Lend_if_1:
+    jmp .Lend_if_0
+.Lelse_0:
+    ;; -- push --
+    mov rax, 34
+    push rax
+    ;; -- print --
+    pop rdi
+    call dump
+.Lend_if_0:
     ;; -- exit --
     mov rax, 60
     mov rdi, 0

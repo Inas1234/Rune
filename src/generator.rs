@@ -163,20 +163,24 @@ impl Generator {
                     let label = self.if_count;
                     self.if_stack.push_back(label);
                     self.if_count += 1;
-                    write!(stream, "    ;; -- if --\n").expect("Error");
-                    write!(stream, "    pop rax\n").expect("Error writing pop to stream");
-                    write!(stream, "    test rax, rax\n").expect("Error writing cmp to stream");
-                    write!(stream, "    je .if_false_{}\n", label).expect("Error writing je to stream");
-                    self.ip += 1;
+                    write!(stream, "    ;; -- if --\n").unwrap();
+                    write!(stream, "    pop rax\n").unwrap();
+                    write!(stream, "    test rax, rax\n").unwrap();
+                    write!(stream, "    je .Lelse_{}\n", label).unwrap(); // Jump to Else part if condition is false
+                },
+                NodeStmt::Else(_node) => {
+                    if let Some(label) = self.if_stack.back() {
+                        write!(stream, "    jmp .Lend_if_{}\n", label).unwrap(); // Jump to EndIf to skip Else part
+                        write!(stream, ".Lelse_{}:\n", label).unwrap(); // Label for Else part
+                    } else {
+                        panic!("No matching 'if' for 'else'");
+                    }
                 },
                 NodeStmt::EndIf(_node) => {
                     if let Some(label) = self.if_stack.pop_back() {
-                        write!(stream, "    ;; -- endif --\n").expect("Error");
-                        write!(stream, ".if_false_{}:\n", label).expect("Error writing label to stream");
-                        self.ip += 1;
-                    }
-                    else {
-                        panic!("No matching endif");
+                        write!(stream, ".Lend_if_{}:\n", label).unwrap(); // Label for the end of the If/Else block
+                    } else {
+                        panic!("No matching 'if' for 'endif'");
                     }
                 },
             }

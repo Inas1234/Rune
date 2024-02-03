@@ -46,6 +46,9 @@ pub struct NodeStmtIf{}
 pub struct NodeStmtEndIf{}
 
 #[derive(Debug)]
+pub struct NodeStmtElse{}
+
+#[derive(Debug)]
 pub enum NodeStmt{
     Push(NodeStmtPush),
     Print(NodeStmtPrint),
@@ -60,6 +63,7 @@ pub enum NodeStmt{
     Equal(NodeStmtEqual),
     If(NodeStmtIf),
     EndIf(NodeStmtEndIf),
+    Else(NodeStmtElse),
 }
 
 pub struct Node{
@@ -169,6 +173,12 @@ impl Parser {
         }))
     }
 
+    fn parse_else(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        Some(NodeStmt::Else(NodeStmtElse{
+        }))
+    }
+
     pub fn parse(&mut self) -> Option<NodeStmt> {
         while let Some(token) = self.peek(0) {
             match token.token_type {
@@ -210,6 +220,9 @@ impl Parser {
                 },
                 tokenizer::TokenType::EndIf => {
                     return self.parse_end_if();
+                },
+                tokenizer::TokenType::Else => {
+                    return self.parse_else();
                 },
                 _ => {
                     panic!("Unexpected token {:?}", token);

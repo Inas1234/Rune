@@ -16,7 +16,8 @@ pub enum TokenType{
     Do,
     Equal,
     If,
-    EndIf
+    EndIf,
+    Else
 }
 
 #[derive(Debug, Clone)]
@@ -120,6 +121,12 @@ impl Tokenizer {
                 else if buffer == "end"{
                     tokens.push(Token{
                         token_type: TokenType::EndIf,
+                        value: None,
+                    });
+                }
+                else if buffer == "else"{
+                    tokens.push(Token{
+                        token_type: TokenType::Else,
                         value: None,
                     });
                 }

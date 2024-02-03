@@ -50,25 +50,76 @@ segment .text
 global _start
 _start:
     ;; -- push --
-    push 10
+    mov rax, 34
+    push rax
     ;; -- push --
-    push 6
-    ;; -- minus --
-    pop rax
-    pop rbx
-    sub rbx, rax
-    push rbx
-    ;; -- push --
-    push 5
+    mov rax, 35
+    push rax
     ;; -- plus --
     pop rax
     pop rbx
     add rax, rbx
     push rax
+    ;; -- push --
+    mov rax, 69
+    push rax
+    ;; -- equal --
+    mov rcx, 0
+    mov rdx, 1
+    pop rax
+    pop rbx
+    cmp rax, rbx
+    cmove rcx, rdx
+    push rcx
+    ;; -- if --
+    pop rax
+    test rax, rax
+    je .if_false_0
+    ;; -- push --
+    mov rax, 12
+    push rax
+    ;; -- push --
+    mov rax, 13
+    push rax
+    ;; -- plus --
+    pop rax
+    pop rbx
+    add rax, rbx
+    push rax
+    ;; -- push --
+    mov rax, 25
+    push rax
+    ;; -- equal --
+    mov rcx, 0
+    mov rdx, 1
+    pop rax
+    pop rbx
+    cmp rax, rbx
+    cmove rcx, rdx
+    push rcx
+    ;; -- if --
+    pop rax
+    test rax, rax
+    je .if_false_1
+    ;; -- push --
+    mov rax, 31
+    push rax
     ;; -- print --
     pop rdi
     call dump
+    ;; -- endif --
+.if_false_1:
+    ;; -- push --
+    mov rax, 31
+    push rax
+    ;; -- print --
+    pop rdi
+    call dump
+    ;; -- endif --
+.if_false_0:
     ;; -- exit --
     mov rax, 60
     mov rdi, 0
     syscall
+section .bss
+    mem resb 640000

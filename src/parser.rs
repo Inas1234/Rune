@@ -17,12 +17,49 @@ pub struct NodeStmtDup{}
 pub struct NodeStmtMinus{}
 
 #[derive(Debug)]
+pub struct NodeStmtStore{
+}
+
+#[derive(Debug)]
+pub struct NodeStmtLoad{
+}
+
+#[derive(Debug)]
+pub struct NodeStmtMem{}
+
+#[derive(Debug)]
+pub struct NodeStmtSyscall3{}
+
+#[derive(Debug)]
+pub struct NodeStmtSyscall1{}
+
+#[derive(Debug)]
+pub struct NodeStmtEqual{}
+
+#[derive(Debug)]
+pub struct NodeStmtWhile{}
+
+#[derive(Debug)]
+pub struct NodeStmtIf{}
+
+#[derive(Debug)]
+pub struct NodeStmtEndIf{}
+
+#[derive(Debug)]
 pub enum NodeStmt{
     Push(NodeStmtPush),
     Print(NodeStmtPrint),
     Plus(NodeStmtPlus),
     Dup(NodeStmtDup),
     Minus(NodeStmtMinus),
+    Store(NodeStmtStore),
+    Load(NodeStmtLoad),
+    Mem(NodeStmtMem),
+    Syscall3(NodeStmtSyscall3),
+    Syscall1(NodeStmtSyscall1),
+    Equal(NodeStmtEqual),
+    If(NodeStmtIf),
+    EndIf(NodeStmtEndIf),
 }
 
 pub struct Node{
@@ -82,6 +119,56 @@ impl Parser {
         Some(NodeStmt::Minus(NodeStmtMinus{}))
     }
     
+    fn parse_load(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        Some(NodeStmt::Load(NodeStmtLoad{
+        }))
+    }
+
+    fn parse_store(&mut self) -> Option<NodeStmt> {
+        self.consume();
+
+        Some(NodeStmt::Store(NodeStmtStore{
+        }))
+    }
+
+    fn parse_mem(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        Some(NodeStmt::Mem(NodeStmtMem{
+        }))
+    }
+
+    fn parse_syscall3(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        Some(NodeStmt::Syscall3(NodeStmtSyscall3{
+        }))
+    }
+
+    fn parse_syscall1(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        Some(NodeStmt::Syscall1(NodeStmtSyscall1{
+        }))
+    }
+
+    fn parse_equal(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        Some(NodeStmt::Equal(NodeStmtEqual{
+        }))
+    }
+
+    fn parse_if(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        // Check if end_if is missing
+        Some(NodeStmt::If(NodeStmtIf{
+        }))
+    }
+
+    fn parse_end_if(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        Some(NodeStmt::EndIf(NodeStmtEndIf{
+        }))
+    }
+
     pub fn parse(&mut self) -> Option<NodeStmt> {
         while let Some(token) = self.peek(0) {
             match token.token_type {
@@ -99,6 +186,30 @@ impl Parser {
                 },
                 tokenizer::TokenType::Minus => {
                     return self.parse_minus();
+                },
+                tokenizer::TokenType::Load => {
+                    return self.parse_load();
+                },
+                tokenizer::TokenType::Store => {
+                    return self.parse_store();
+                },
+                tokenizer::TokenType::Mem => {
+                    return self.parse_mem();
+                },
+                tokenizer::TokenType::Syscall3 => {
+                    return self.parse_syscall3();
+                },
+                tokenizer::TokenType::Syscall1 => {
+                    return self.parse_syscall1();
+                },
+                tokenizer::TokenType::Equal => {
+                    return self.parse_equal();
+                },
+                tokenizer::TokenType::If => {
+                    return self.parse_if();
+                },
+                tokenizer::TokenType::EndIf => {
+                    return self.parse_end_if();
                 },
                 _ => {
                     panic!("Unexpected token {:?}", token);

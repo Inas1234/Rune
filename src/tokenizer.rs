@@ -5,7 +5,18 @@ pub enum TokenType{
     Plus,
     Dot,
     Dup,
-    Minus
+    Minus,
+    Load,
+    Store,
+    Mem,
+    Syscall3,
+    Syscall1,
+    While,
+    EndWhile,
+    Do,
+    Equal,
+    If,
+    EndIf
 }
 
 #[derive(Debug, Clone)]
@@ -51,7 +62,7 @@ impl Tokenizer {
             else if c.is_alphabetic() {
                 buffer.push(self.consume());
                 while let Some(c) = self.peek(0) {
-                    if c.is_alphabetic(){
+                    if c.is_alphanumeric(){
                         buffer.push(self.consume());
                     } else {
                         break;
@@ -61,6 +72,54 @@ impl Tokenizer {
                 if buffer == "dup" {
                     tokens.push(Token{
                         token_type: TokenType::Dup,
+                        value: None,
+                    });
+                }
+                else if buffer == "mem"{
+                    tokens.push(Token{
+                        token_type: TokenType::Mem,
+                        value: None,
+                    });
+                }
+                else if buffer == "syscall3"{
+                    tokens.push(Token{
+                        token_type: TokenType::Syscall3,
+                        value: None,
+                    });
+                }
+                else if buffer == "syscall1"{
+                    tokens.push(Token{
+                        token_type: TokenType::Syscall1,
+                        value: None,
+                    });
+                }
+                else if buffer == "while"{
+                    tokens.push(Token{
+                        token_type: TokenType::While,
+                        value: None,
+                    });
+                }
+                else if buffer == "end_while"{
+                    tokens.push(Token{
+                        token_type: TokenType::EndWhile,
+                        value: None,
+                    });
+                }
+                else if buffer == "do"{
+                    tokens.push(Token{
+                        token_type: TokenType::Do,
+                        value: None,
+                    });
+                }
+                else if buffer == "if"{
+                    tokens.push(Token{
+                        token_type: TokenType::If,
+                        value: None,
+                    });
+                }
+                else if buffer == "end"{
+                    tokens.push(Token{
+                        token_type: TokenType::EndIf,
                         value: None,
                     });
                 }
@@ -86,6 +145,30 @@ impl Tokenizer {
                     token_type: TokenType::Dot,
                     value: None,
                 });
+            }
+            else if c == '@' {
+                self.consume();
+                tokens.push(Token{
+                    token_type: TokenType::Load,
+                    value: None,
+                });
+            }
+            else if c == '!' {
+                self.consume();
+                tokens.push(Token{
+                    token_type: TokenType::Store,
+                    value: None,
+                });
+            }
+            else if c == '=' {
+                self.consume();
+                tokens.push(Token{
+                    token_type: TokenType::Equal,
+                    value: None,
+                });
+            }
+            else if c.is_whitespace() {
+                self.consume();
             }
             else {
                 self.consume();

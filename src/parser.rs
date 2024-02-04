@@ -61,6 +61,18 @@ pub struct NodeStmtLesser{}
 pub struct NodeStmtGreater{}
 
 #[derive(Debug)]
+pub struct NodeStmt2Dup{}
+
+#[derive(Debug)]
+pub struct NodeStmtOver{}
+
+#[derive(Debug)]
+pub struct NodeStmtSwap{}
+
+#[derive(Debug)]
+pub struct NodeStmtDrop{}
+
+#[derive(Debug)]
 pub enum NodeStmt{
     Push(NodeStmtPush),
     Print(NodeStmtPrint),
@@ -81,6 +93,10 @@ pub enum NodeStmt{
     Do(NodeStmtDo),
     Lesser(NodeStmtLesser),
     Greater(NodeStmtGreater),
+    Dup2(NodeStmt2Dup),
+    Over(NodeStmtOver),
+    Swap(NodeStmtSwap),
+    Drop(NodeStmtDrop),
 }
 
 pub struct Node{
@@ -227,7 +243,29 @@ impl Parser {
         }))
     }
 
+    fn parse_dup2(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        Some(NodeStmt::Dup2(NodeStmt2Dup{
+        }))
+    }
 
+    fn parse_over(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        Some(NodeStmt::Over(NodeStmtOver{
+        }))
+    }
+
+    fn parse_swap(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        Some(NodeStmt::Swap(NodeStmtSwap{
+        }))
+    }
+
+    fn parse_drop(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        Some(NodeStmt::Drop(NodeStmtDrop{
+        }))
+    }
     pub fn parse(&mut self) -> Option<NodeStmt> {
         while let Some(token) = self.peek(0) {
             match token.token_type {
@@ -287,6 +325,18 @@ impl Parser {
                 },
                 tokenizer::TokenType::Greater => {
                     return self.parse_greater();
+                },
+                tokenizer::TokenType::Dup2 => {
+                    return self.parse_dup2();
+                },
+                tokenizer::TokenType::Over => {
+                    return self.parse_over();
+                },
+                tokenizer::TokenType::Swap => {
+                    return self.parse_swap();
+                },
+                tokenizer::TokenType::Drop => {
+                    return self.parse_drop();
                 },
                 _ => {
                     panic!("Unexpected token {:?}", token);

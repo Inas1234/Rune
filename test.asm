@@ -50,10 +50,32 @@ segment .text
 global _start
 _start:
     ;; -- push --
-    mov rax, 100
+    mov rax, 10
+    push rax
+    ;; -- push --
+    mov rax, 0
     push rax
     ;; -- while --
 .L_while_start_0:
+    ;; -- dup2 --
+    pop rax
+    pop rbx
+    push rbx
+    push rax
+    push rbx
+    push rax
+    ;; -- greater --
+    mov rcx, 0
+    mov rdx, 1
+    pop rbx
+    pop rax
+    cmp rax, rbx
+    cmovg rcx, rdx
+    push rcx
+    ;; -- do --
+    pop rax
+    test rax, rax
+    jz .L_while_end_0
     ;; -- dup --
     pop rax
     push rax
@@ -61,63 +83,125 @@ _start:
     ;; -- push --
     mov rax, 0
     push rax
-    ;; -- lesser --
-    mov rcx, 0
-    mov rdx, 1
+    ;; -- while --
+.L_while_start_1:
+    ;; -- dup2 --
     pop rax
     pop rbx
+    push rbx
+    push rax
+    push rbx
+    push rax
+    ;; -- greater --
+    mov rcx, 0
+    mov rdx, 1
+    pop rbx
+    pop rax
     cmp rax, rbx
-    cmovl rcx, rdx
+    cmovg rcx, rdx
     push rcx
     ;; -- do --
     pop rax
     test rax, rax
-    jz .L_while_end_0
+    jz .L_while_end_1
+    ;; -- mem --
+    push mem
     ;; -- push --
-    mov rax, 32
-    push rax
-    ;; -- push --
-    mov rax, 23
+    mov rax, 0
     push rax
     ;; -- plus --
     pop rax
     pop rbx
     add rax, rbx
     push rax
-    ;; -- equal --
-    mov rcx, 0
-    mov rdx, 1
-    pop rax
+    ;; -- push --
+    mov rax, 42
+    push rax
+    ;; -- store --
     pop rbx
-    cmp rax, rbx
-    cmove rcx, rdx
-    push rcx
-    ;; -- if --
     pop rax
-    test rax, rax
-    jz .address_num_0
+    mov [rax], bl
     ;; -- push --
     mov rax, 1
     push rax
-    ;; -- print --
-    pop rdi
-    call dump
-.address_num_0:
-    ;; -- dup --
-    pop rax
-    push rax
-    push rax
-    ;; -- print --
-    pop rdi
-    call dump
+    ;; -- mem --
+    push mem
     ;; -- push --
     mov rax, 1
     push rax
-    ;; -- minus --
+    ;; -- push --
+    mov rax, 1
+    push rax
+    ;; -- syscall3 --
+    pop rax
+    pop rdi
+    pop rsi
+    pop rdx
+    syscall
+    ;; -- push --
+    mov rax, 1
+    push rax
+    ;; -- plus --
     pop rax
     pop rbx
-    sub rbx, rax
-    push rbx
+    add rax, rbx
+    push rax
+    jmp .L_while_start_1
+.L_while_end_1:
+    ;; -- drop --
+    pop rax
+    ;; -- drop --
+    pop rax
+    ;; -- mem --
+    push mem
+    ;; -- push --
+    mov rax, 1
+    push rax
+    ;; -- plus --
+    pop rax
+    pop rbx
+    add rax, rbx
+    push rax
+    ;; -- push --
+    mov rax, 10
+    push rax
+    ;; -- store --
+    pop rbx
+    pop rax
+    mov [rax], bl
+    ;; -- push --
+    mov rax, 1
+    push rax
+    ;; -- mem --
+    push mem
+    ;; -- push --
+    mov rax, 1
+    push rax
+    ;; -- plus --
+    pop rax
+    pop rbx
+    add rax, rbx
+    push rax
+    ;; -- push --
+    mov rax, 1
+    push rax
+    ;; -- push --
+    mov rax, 1
+    push rax
+    ;; -- syscall3 --
+    pop rax
+    pop rdi
+    pop rsi
+    pop rdx
+    syscall
+    ;; -- push --
+    mov rax, 1
+    push rax
+    ;; -- plus --
+    pop rax
+    pop rbx
+    add rax, rbx
+    push rax
     jmp .L_while_start_0
 .L_while_end_0:
     ;; -- exit --

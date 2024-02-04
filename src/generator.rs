@@ -168,8 +168,8 @@ impl Generator {
                     write!(stream, "    ;; -- lesser --\n").expect("Error");
                     write!(stream, "    mov rcx, 0\n").expect("Error writing pop to stream");
                     write!(stream, "    mov rdx, 1\n").expect("Error writing pop to stream");
-                    write!(stream, "    pop rax\n").expect("Error writing pop to stream");
                     write!(stream, "    pop rbx\n").expect("Error writing pop to stream");
+                    write!(stream, "    pop rax\n").expect("Error writing pop to stream");
                     write!(stream, "    cmp rax, rbx\n").expect("Error writing cmp to stream");
                     write!(stream, "    cmovl rcx, rdx\n").expect("Error writing je to stream");
                     write!(stream, "    push rcx\n").expect("Error writing push to stream");
@@ -179,8 +179,8 @@ impl Generator {
                     write!(stream, "    ;; -- greater --\n").expect("Error");
                     write!(stream, "    mov rcx, 0\n").expect("Error writing pop to stream");
                     write!(stream, "    mov rdx, 1\n").expect("Error writing pop to stream");
-                    write!(stream, "    pop rax\n").expect("Error writing pop to stream");
                     write!(stream, "    pop rbx\n").expect("Error writing pop to stream");
+                    write!(stream, "    pop rax\n").expect("Error writing pop to stream");
                     write!(stream, "    cmp rax, rbx\n").expect("Error writing cmp to stream");
                     write!(stream, "    cmovg rcx, rdx\n").expect("Error writing je to stream");
                     write!(stream, "    push rcx\n").expect("Error writing push to stream");
@@ -188,26 +188,26 @@ impl Generator {
                 },
                 NodeStmt::If(_node) => {
                     let label = self.if_count;
-                    self.if_stack.push_back(label); // Remember this if for a potential else
-                    self.if_count += 1; // Prepare next label
+                    self.if_stack.push_back(label); 
+                    self.if_count += 1; 
                     
                     write!(stream, "    ;; -- if --\n").expect("Error");
                     write!(stream, "    pop rax\n").expect("Error");
                     write!(stream, "    test rax, rax\n").expect("Error");
-                    write!(stream, "    jz .address_num_{}\n", label).expect("Error"); // Jump if false
+                    write!(stream, "    jz .address_num_{}\n", label).expect("Error"); 
                 },
                 NodeStmt::Else(_node) => {
                     let if_label = self.if_stack.pop_back().expect("No matching 'if' for 'else'");
-                    let else_label = self.if_count; // Use the next label for the jump over the else
-                    self.if_count += 1; // Increment for the next use
+                    let else_label = self.if_count; 
+                    self.if_count += 1; 
                     
-                    write!(stream, "    jmp .address_num_{}\n", else_label).expect("Error"); // Jump over else
-                    write!(stream, ".address_num_{}:\n", if_label).expect("Error"); // Start else block
-                    self.if_stack.push_back(else_label); // Push else label for endif
+                    write!(stream, "    jmp .address_num_{}\n", else_label).expect("Error"); 
+                    write!(stream, ".address_num_{}:\n", if_label).expect("Error");
+                    self.if_stack.push_back(else_label); 
                 },
                 NodeStmt::EndIf(_node) => {
                     if let Some(label) = self.if_stack.pop_back() {
-                        write!(stream, ".address_num_{}:\n", label).expect("Error"); // Mark the end
+                        write!(stream, ".address_num_{}:\n", label).expect("Error"); 
                     } else {
                         panic!("Syntax error: 'endif' without matching 'if' or 'else'");
                     }
@@ -238,8 +238,38 @@ impl Generator {
                         panic!("Syntax error: 'endwhile' without matching 'while'");
                     }
                 },
-                
-
+                NodeStmt::Dup2(_node) => {
+                    write!(stream, "    ;; -- dup2 --\n").expect("Error");
+                    write!(stream, "    pop rax\n").expect("Error writing pop to stream");
+                    write!(stream, "    pop rbx\n").expect("Error writing pop to stream");
+                    write!(stream, "    push rbx\n").expect("Error writing push to stream");
+                    write!(stream, "    push rax\n").expect("Error writing push to stream");
+                    write!(stream, "    push rbx\n").expect("Error writing push to stream");
+                    write!(stream, "    push rax\n").expect("Error writing push to stream");
+                    self.ip += 1;
+                },
+                NodeStmt::Over(_node) => {
+                    write!(stream, "    ;; -- over --\n").expect("Error");
+                    write!(stream, "    pop rax\n").expect("Error writing pop to stream");
+                    write!(stream, "    pop rbx\n").expect("Error writing pop to stream");
+                    write!(stream, "    push rbx\n").expect("Error writing push to stream");
+                    write!(stream, "    push rax\n").expect("Error writing push to stream");
+                    write!(stream, "    push rbx\n").expect("Error writing push to stream");
+                    self.ip += 1;
+                },
+                NodeStmt::Swap(_node) => {
+                    write!(stream, "    ;; -- swap --\n").expect("Error");
+                    write!(stream, "    pop rax\n").expect("Error writing pop to stream");
+                    write!(stream, "    pop rbx\n").expect("Error writing pop to stream");
+                    write!(stream, "    push rax\n").expect("Error writing push to stream");
+                    write!(stream, "    push rbx\n").expect("Error writing push to stream");
+                    self.ip += 1;
+                },
+                NodeStmt::Drop(_node) => {
+                    write!(stream, "    ;; -- drop --\n").expect("Error");
+                    write!(stream, "    pop rax\n").expect("Error writing pop to stream");
+                    self.ip += 1;
+                },
             }
         }
         write!(stream, "    ;; -- exit --\n").expect("Error");

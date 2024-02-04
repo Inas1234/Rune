@@ -20,6 +20,10 @@ pub enum TokenType{
     Else,
     Lesser,
     Greater,
+    Dup2,
+    Over,
+    Swap,
+    Drop,
 }
 
 #[derive(Debug, Clone)]
@@ -45,7 +49,18 @@ impl Tokenizer {
         let mut tokens = Vec::new();
         let mut buffer = String::new();
         while let Some(c) = self.peek(0) {
-            if c.is_numeric() {
+            if c == '/' && self.peek(1) == Some('/') {
+                self.consume();
+                self.consume();
+                while let Some(c) = self.peek(0) {
+                    if c == '\n' {
+                        self.consume();
+                        break;
+                    }
+                    self.consume();
+                }
+            }
+            else if c.is_numeric() {
                 buffer.push(self.consume());
                 while let Some(c) = self.peek(0) {
                     if c.is_numeric(){
@@ -75,6 +90,12 @@ impl Tokenizer {
                 if buffer == "dup" {
                     tokens.push(Token{
                         token_type: TokenType::Dup,
+                        value: None,
+                    });
+                }
+                else if buffer == "dupp"{
+                    tokens.push(Token{
+                        token_type: TokenType::Dup2,
                         value: None,
                     });
                 }
@@ -131,6 +152,27 @@ impl Tokenizer {
                         token_type: TokenType::Else,
                         value: None,
                     });
+                }
+                else if buffer == "over"{
+                    tokens.push(Token{
+                        token_type: TokenType::Over,
+                        value: None,
+                    });
+                }
+                else if buffer == "swap"{
+                    tokens.push(Token{
+                        token_type: TokenType::Swap,
+                        value: None,
+                    });
+                }
+                else if buffer == "drop"{
+                    tokens.push(Token{
+                        token_type: TokenType::Drop,
+                        value: None,
+                    });
+                }
+                else {
+                    panic!("Unexpected token {:?}", buffer);
                 }
                 buffer.clear();
             }

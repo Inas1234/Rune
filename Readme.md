@@ -7,14 +7,12 @@ Example if statement:
 10 0 while dupp > do
 
     dup 0 while dupp > do
-        mem 0 + 42 !
-        1 mem 1 1 syscall3
+        "*" 1 1 syscall3
         1 +
     endWhile
     
     drop drop 
-    mem 1 + 10 !
-    1 mem 1 + 1 1 syscall3
+    "\n" 1 1 syscall3
     1 +
 
 endWhile
@@ -26,7 +24,6 @@ endWhile
 - [x] Conditional statements
 - [x] Comments
 - [x] Loops
-- [ ] Stings
+- [x] Stings
 - [ ] Standard library
 - [ ] Macros
-- [ ] File I/O

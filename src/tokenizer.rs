@@ -24,6 +24,7 @@ pub enum TokenType{
     Over,
     Swap,
     Drop,
+    StringLiteral,
 }
 
 #[derive(Debug, Clone)]
@@ -174,6 +175,21 @@ impl Tokenizer {
                 else {
                     panic!("Unexpected token {:?}", buffer);
                 }
+                buffer.clear();
+            }
+            else if c == '"' {
+                self.consume();
+                while let Some(c) = self.peek(0) {
+                    if c == '"' {
+                        self.consume();
+                        break;
+                    }
+                    buffer.push(self.consume());
+                }
+                tokens.push(Token{
+                    token_type: TokenType::StringLiteral,
+                    value: Some(buffer.clone()),
+                });
                 buffer.clear();
             }
             else if c == '+' {

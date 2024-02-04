@@ -4,6 +4,13 @@ use crate::tokenizer::{self, Token};
 pub struct NodeStmtPush{
     pub value: i32,
 }
+
+#[derive(Debug)]
+pub struct NodeStmtStringPush{
+    pub value: String,
+    pub length: i32,   
+}
+
 #[derive(Debug)]
 pub struct NodeStmtPrint{}
 
@@ -97,6 +104,7 @@ pub enum NodeStmt{
     Over(NodeStmtOver),
     Swap(NodeStmtSwap),
     Drop(NodeStmtDrop),
+    StringPush(NodeStmtStringPush),
 }
 
 pub struct Node{
@@ -266,6 +274,29 @@ impl Parser {
         Some(NodeStmt::Drop(NodeStmtDrop{
         }))
     }
+
+    fn parse_string_push(&mut self) -> Option<NodeStmt> {
+        let token = self.consume().unwrap();
+        let value = token.value.clone().unwrap();
+        let mut length = 0;
+        let bytes = value.as_bytes();
+        for (i, &byte) in bytes.iter().enumerate() {
+            if byte == b'\\' && i + 1 < bytes.len() && bytes[i + 1] == b'n' {
+                continue;
+            } 
+            else{
+                length += 1;
+            }
+        }
+
+
+
+        Some(NodeStmt::StringPush(NodeStmtStringPush{
+            value,
+            length,
+        }))
+    }
+    
     pub fn parse(&mut self) -> Option<NodeStmt> {
         while let Some(token) = self.peek(0) {
             match token.token_type {
@@ -337,6 +368,9 @@ impl Parser {
                 },
                 tokenizer::TokenType::Drop => {
                     return self.parse_drop();
+                },
+                tokenizer::TokenType::StringLiteral => {
+                    return self.parse_string_push();
                 },
                 _ => {
                     panic!("Unexpected token {:?}", token);

@@ -104,28 +104,10 @@ _start:
     pop rax
     test rax, rax
     jz .L_while_end_1
-    ;; -- mem --
-    push mem
-    ;; -- push --
-    mov rax, 0
-    push rax
-    ;; -- plus --
-    pop rax
-    pop rbx
-    add rax, rbx
-    push rax
-    ;; -- push --
-    mov rax, 42
-    push rax
-    ;; -- store --
-    pop rbx
-    pop rax
-    mov [rax], bl
-    ;; -- push --
+    ;; -- string push --
     mov rax, 1
     push rax
-    ;; -- mem --
-    push mem
+    push string_0
     ;; -- push --
     mov rax, 1
     push rax
@@ -152,36 +134,10 @@ _start:
     pop rax
     ;; -- drop --
     pop rax
-    ;; -- mem --
-    push mem
-    ;; -- push --
+    ;; -- string push --
     mov rax, 1
     push rax
-    ;; -- plus --
-    pop rax
-    pop rbx
-    add rax, rbx
-    push rax
-    ;; -- push --
-    mov rax, 10
-    push rax
-    ;; -- store --
-    pop rbx
-    pop rax
-    mov [rax], bl
-    ;; -- push --
-    mov rax, 1
-    push rax
-    ;; -- mem --
-    push mem
-    ;; -- push --
-    mov rax, 1
-    push rax
-    ;; -- plus --
-    pop rax
-    pop rbx
-    add rax, rbx
-    push rax
+    push string_1
     ;; -- push --
     mov rax, 1
     push rax
@@ -210,3 +166,6 @@ _start:
     syscall
 section .bss
     mem resb 640000
+section .data
+    string_0 db 0x2a, 0
+    string_1 db 0x0a, 0

@@ -1,5 +1,5 @@
 use crate::parser::{ NodeStmt, Node};
-use std::fmt::Write;
+use std::fmt::{format, Write};
 use std::collections::VecDeque;
 
 pub struct Generator{
@@ -9,6 +9,8 @@ pub struct Generator{
     if_stack: VecDeque<i32>,    
     while_count: i32,
     while_stack: VecDeque<i32>,
+    strings: Vec<String>,
+    string_count: i32,
 }
 
 impl Generator {
@@ -20,7 +22,8 @@ impl Generator {
             if_stack: VecDeque::new(),
             while_count: 0,
             while_stack: VecDeque::new(),
-
+            strings: Vec::new(),
+            string_count: 0,
         }
     }
 
@@ -270,6 +273,15 @@ impl Generator {
                     write!(stream, "    pop rax\n").expect("Error writing pop to stream");
                     self.ip += 1;
                 },
+                NodeStmt::StringPush(node) => {
+                    self.strings.push(node.value.clone());
+                    write!(stream, "    ;; -- string push --\n").expect("Error");
+                    write!(stream, "    mov rax, {}\n", node.length).expect("Error writing mov to stream");
+                    write!(stream, "    push rax\n").expect("Error writing push to stream");
+                    write!(stream, "    push string_{}\n", self.string_count).expect("Error writing push to stream");
+                    self.string_count += 1;
+                    self.ip += 1;
+                },
             }
         }
         write!(stream, "    ;; -- exit --\n").expect("Error");
@@ -279,6 +291,34 @@ impl Generator {
 
         write!(stream, "section .bss\n").expect("Error");
         write!(stream, "    mem resb 640000\n").expect("Error");
+        write!(stream, "section .data\n").expect("Error");
+        for (i, string) in self.strings.iter().enumerate() {
+            let newString = self.string_to_hex(string.to_string());
+            write!(stream, "    string_{} db {}, 0\n", i, newString).expect("Error");
+        }
         stream
+    }
+
+    fn string_to_hex(&self, string: String) -> String {
+        let bytes = string.as_bytes();
+        let mut hex_representation = String::new();
+        let mut skip_next = false;
+
+        for (i, &byte) in bytes.iter().enumerate() {
+            if skip_next {
+                skip_next = false;
+                continue;
+            }
+
+            if byte == b'\\' && i + 1 < bytes.len() && bytes[i + 1] == b'n' {
+                hex_representation.push_str("0x0a, ");
+                skip_next = true; 
+            } else {
+                let hex = format!("0x{:02x}, ", byte);
+                hex_representation.push_str(&hex);
+            }
+        }
+
+        hex_representation.trim_end_matches(", ").to_string()
     }
 }

@@ -1,9 +1,7 @@
-34 35 + 69 = if 
-    0 if 
-        44 .
-    else 
-        55 .
-    end
-else
-    66 .
-end
+100 while dup 0 < do
+    32 23 + = if
+        1 .
+    endIf
+    dup .
+    1 -
+endWhile

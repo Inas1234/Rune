@@ -40,6 +40,12 @@ pub struct NodeStmtEqual{}
 pub struct NodeStmtWhile{}
 
 #[derive(Debug)]
+pub struct NodeStmtEndWhile{}
+
+#[derive(Debug)]
+pub struct NodeStmtDo{}
+
+#[derive(Debug)]
 pub struct NodeStmtIf{}
 
 #[derive(Debug)]
@@ -47,6 +53,12 @@ pub struct NodeStmtEndIf{}
 
 #[derive(Debug)]
 pub struct NodeStmtElse{}
+
+#[derive(Debug)]
+pub struct NodeStmtLesser{}
+
+#[derive(Debug)]
+pub struct NodeStmtGreater{}
 
 #[derive(Debug)]
 pub enum NodeStmt{
@@ -64,6 +76,11 @@ pub enum NodeStmt{
     If(NodeStmtIf),
     EndIf(NodeStmtEndIf),
     Else(NodeStmtElse),
+    While(NodeStmtWhile),
+    EndWhile(NodeStmtEndWhile),
+    Do(NodeStmtDo),
+    Lesser(NodeStmtLesser),
+    Greater(NodeStmtGreater),
 }
 
 pub struct Node{
@@ -179,6 +196,38 @@ impl Parser {
         }))
     }
 
+    fn parse_while(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        // Check if end_while is missing
+        Some(NodeStmt::While(NodeStmtWhile{
+        }))
+    }
+
+    fn parse_end_while(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        Some(NodeStmt::EndWhile(NodeStmtEndWhile{
+        }))
+    }
+
+    fn parse_do(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        Some(NodeStmt::Do(NodeStmtDo{
+        }))
+    }
+
+    fn parse_lesser(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        Some(NodeStmt::Lesser(NodeStmtLesser{
+        }))
+    }
+
+    fn parse_greater(&mut self) -> Option<NodeStmt> {
+        self.consume();
+        Some(NodeStmt::Greater(NodeStmtGreater{
+        }))
+    }
+
+
     pub fn parse(&mut self) -> Option<NodeStmt> {
         while let Some(token) = self.peek(0) {
             match token.token_type {
@@ -223,6 +272,21 @@ impl Parser {
                 },
                 tokenizer::TokenType::Else => {
                     return self.parse_else();
+                },
+                tokenizer::TokenType::While => {
+                    return self.parse_while();
+                },
+                tokenizer::TokenType::EndWhile => {
+                    return self.parse_end_while();
+                },
+                tokenizer::TokenType::Do => {
+                    return self.parse_do();
+                },
+                tokenizer::TokenType::Lesser => {
+                    return self.parse_lesser();
+                },
+                tokenizer::TokenType::Greater => {
+                    return self.parse_greater();
                 },
                 _ => {
                     panic!("Unexpected token {:?}", token);

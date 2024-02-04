@@ -17,7 +17,9 @@ pub enum TokenType{
     Equal,
     If,
     EndIf,
-    Else
+    Else,
+    Lesser,
+    Greater,
 }
 
 #[derive(Debug, Clone)]
@@ -100,7 +102,7 @@ impl Tokenizer {
                         value: None,
                     });
                 }
-                else if buffer == "end_while"{
+                else if buffer == "endWhile"{
                     tokens.push(Token{
                         token_type: TokenType::EndWhile,
                         value: None,
@@ -118,7 +120,7 @@ impl Tokenizer {
                         value: None,
                     });
                 }
-                else if buffer == "end"{
+                else if buffer == "endIf"{
                     tokens.push(Token{
                         token_type: TokenType::EndIf,
                         value: None,
@@ -171,6 +173,20 @@ impl Tokenizer {
                 self.consume();
                 tokens.push(Token{
                     token_type: TokenType::Equal,
+                    value: None,
+                });
+            }
+            else if c == '<' {
+                self.consume();
+                tokens.push(Token{
+                    token_type: TokenType::Lesser,
+                    value: None,
+                });
+            }
+            else if c == '>' {
+                self.consume();
+                tokens.push(Token{
+                    token_type: TokenType::Greater,
                     value: None,
                 });
             }
